@@ -25,7 +25,7 @@ It provides secure authentication, role-based dashboards, real-time chat, file s
 
 ### 🔐 Login Page
 ![Login](https://raw.githubusercontent.com/Hemakshi24/Student-Faculty-intraction-portal/e07c18728207492a41f4fcc676feb40267650540/Screenshot%202025-09-15%20210135.png)
-###👩‍🏫 Faculty / Teacher
+
 ### 👨‍🎓 Student Dashboard
 ![Student Dashboard](https://raw.githubusercontent.com/Hemakshi24/Student-Faculty-intraction-portal/e07c18728207492a41f4fcc676feb40267650540/Screenshot%202025-09-15%20210159.png)
 
