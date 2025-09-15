@@ -1,0 +1,212 @@
+       'image': 'text-purple-400'
+            };
+
+            sampleData.documents.forEach(doc => {
+                const docDiv = document.createElement('div');
+                docDiv.className = 'document-item';
+                
+                docDiv.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="p-3 bg-muted rounded-lg ${fileColors[doc.type]}">
+                            <i class="${fileIcons[doc.type]} text-xl"></i>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            ${doc.isStarred ? '<i class="fas fa-star text-amber-400"></i>' : ''}
+                            <button class="button button-ghost p-1">
+                                <i class="fas fa-ellipsis-v text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <h4 class="font-medium text-sm line-clamp-2 text-foreground">${doc.name}</h4>
+                        
+                        <div class="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>${doc.size}</span>
+                            <span>v${doc.version}</span>
+                        </div>
+                        
+                        <div class="text-xs text-muted-foreground">
+                            <div class="flex items-center space-x-1 mb-1">
+                                <i class="fas fa-user"></i>
+                                <span>${doc.uploadedBy}</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-calendar"></i>
+                                <span>${new Date(doc.uploadDate).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-1">
+                            ${doc.tags.slice(0, 2).map(tag => `<span class="badge badge-outline text-xs px-1 py-0">${tag}</span>`).join('')}
+                            ${doc.tags.length > 2 ? `<span class="badge badge-outline text-xs px-1 py-0">+${doc.tags.length - 2}</span>` : ''}
+                        </div>
+                        
+                        <div class="flex items-center justify-between pt-2">
+                            <div class="flex items-center space-x-1 text-xs text-muted-foreground">
+                                <i class="fas fa-download"></i>
+                                <span>${doc.downloads}</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button class="button button-ghost p-1">
+                                    <i class="fas fa-eye text-xs"></i>
+                                </button>
+                                <button class="button button-ghost p-1">
+                                    <i class="fas fa-download text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(docDiv);
+            });
+        }
+
+        function renderDocumentsList() {
+            const documentsDisplay = document.getElementById('documentsDisplay');
+            if (!documentsDisplay) return;
+
+            documentsDisplay.innerHTML = '<div class="space-y-2"></div>';
+            const list = documentsDisplay.querySelector('.space-y-2');
+
+            const fileIcons = {
+                'document': 'fas fa-file-alt',
+                'presentation': 'fas fa-file-powerpoint',
+                'video': 'fas fa-video',
+                'image': 'fas fa-image'
+            };
+
+            const fileColors = {
+                'document': 'text-blue-400',
+                'presentation': 'text-emerald-400',
+                'video': 'text-red-400',
+                'image': 'text-purple-400'
+            };
+
+            sampleData.documents.forEach(doc => {
+                const docDiv = document.createElement('div');
+                docDiv.className = 'card-compact hover:shadow-sm transition-shadow';
+                
+                docDiv.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="p-2 bg-muted rounded-lg ${fileColors[doc.type]}">
+                            <i class="${fileIcons[doc.type]}"></i>
+                        </div>
+                        
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center space-x-2">
+                                <h4 class="font-medium text-sm truncate text-foreground">${doc.name}</h4>
+                                ${doc.isStarred ? '<i class="fas fa-star text-amber-400 shrink-0"></i>' : ''}
+                            </div>
+                            <div class="flex items-center space-x-4 text-xs text-muted-foreground mt-1">
+                                <span>${doc.course}</span>
+                                <span>${doc.uploadedBy}</span>
+                                <span>${new Date(doc.uploadDate).toLocaleDateString()}</span>
+                                <span>${doc.size}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2">
+                            <div class="flex flex-wrap gap-1">
+                                ${doc.tags.slice(0, 3).map(tag => `<span class="badge badge-outline text-xs px-1 py-0">${tag}</span>`).join('')}
+                            </div>
+                            
+                            <div class="flex items-center space-x-1 text-xs text-muted-foreground">
+                                <i class="fas fa-download"></i>
+                                <span>${doc.downloads}</span>
+                            </div>
+                            
+                            <div class="flex items-center space-x-1">
+                                <button class="button button-ghost button-sm">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="button button-ghost button-sm">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="button button-ghost button-sm">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                list.appendChild(docDiv);
+            });
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            if (!messageInput || !messageInput.value.trim()) return;
+
+            const message = messageInput.value.trim();
+            const chatMessages = document.getElementById('chatMessages');
+            
+            if (chatMessages) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message own';
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-3 flex-row-reverse space-x-reverse">
+                        <div class="avatar">ME</div>
+                        <div class="space-y-1 items-end flex flex-col">
+                            <div class="flex items-center space-x-2 text-xs text-muted-foreground">
+                                <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+                            <div class="message-content">
+                                <p class="text-sm">${message}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Remove typing indicator
+                const typingIndicator = chatMessages.querySelector('.typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.parentElement.remove();
+                }
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            messageInput.value = '';
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            const html = document.documentElement;
+            const icon = document.querySelector('#darkModeToggle i');
+            
+            if (isDarkMode) {
+                html.classList.add('dark');
+                icon.className = 'fas fa-moon';
+            } else {
+                html.classList.remove('dark');
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        // Handle responsive sidebar
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Handle clicks outside sidebar on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            
+            if (window.innerWidth <= 768 && 
+                sidebar.classList.contains('open') && 
+                !sidebar.contains(e.target) && 
+                !sidebarToggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

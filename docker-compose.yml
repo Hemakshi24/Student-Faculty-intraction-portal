@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/portal_db
+      - PORT=5000
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend/uploads:/usr/src/app/backend/uploads
+  mongo:
+    image: mongo:6
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

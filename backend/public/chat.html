@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Portal Demo - Chat / Upload / Videos</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 16px; }
+    #messages { height: 200px; overflow:auto; border:1px solid #ddd; padding:8px; }
+    #notifications { height:100px; overflow:auto; border:1px solid #ddd; padding:8px; margin-top:8px;}
+  </style>
+</head>
+<body>
+  <h2>Portal Demo</h2>
+  <div>
+    <label>Your name: <input id="name" value="Guest"></label>
+    <button id="join">Join Global</button>
+  </div>
+  <div id="messages"></div>
+  <input id="text" placeholder="Type message" style="width:60%"><button id="send">Send</button>
+
+  <h3>Upload file</h3>
+  <form id="uploadForm">
+    <input type="file" id="file" name="file"><br>
+    <input id="token" placeholder="JWT token (optional for demo)" style="width:60%"><br>
+    <button>Upload</button>
+  </form>
+
+  <h3>Videos</h3>
+  <div id="videos"></div>
+
+  <h3>Notifications</h3>
+  <div id="notifications"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  const messagesEl = document.getElementById('messages');
+  const notificationsEl = document.getElementById('notifications');
+  document.getElementById('join').onclick = () => {
+    const name = document.getElementById('name').value || 'Guest';
+    socket.emit('joinRoom','global');
+    appendMessage('You joined global as ' + name);
+  };
+  document.getElementById('send').onclick = () => {
+    const name = document.getElementById('name').value || 'Guest';
+    const text = document.getElementById('text').value;
+    socket.emit('chatMessage', { room: 'global', from: name, text });
+    document.getElementById('text').value = '';
+  };
+  socket.on('chatMessage', (msg) => {
+    appendMessage(msg.from + ': ' + msg.text);
+  });
+
+  socket.on('notification', (n) => {
+    appendNotification(n.title + ' - ' + n.body);
+  });
+
+  socket.on('fileUploaded', (f) => {
+    appendNotification('File uploaded: ' + f.originalname + ' (' + f.filename + ')');
+    addVideoLink(f.filename, f.originalname);
+  });
+
+  function appendMessage(t){
+    const div = document.createElement('div'); div.textContent = t; messagesEl.appendChild(div); messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+  function appendNotification(t){
+    const div = document.createElement('div'); div.textContent = t; notificationsEl.appendChild(div); notificationsEl.scrollTop = notificationsEl.scrollHeight;
+  }
+  function addVideoLink(filename, original){
+    const container = document.getElementById('videos');
+    const v = document.createElement('video');
+    v.controls = true;
+    v.width = 480;
+    const src = '/api/files/' + filename;
+    const p = document.createElement('p');
+    p.textContent = original;
+    v.src = src;
+    container.appendChild(p);
+    container.appendChild(v);
+  }
+
+  // upload form
+  document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = document.getElementById('file').files[0];
+    if (!f) return alert('Choose file');
+    const form = new FormData();
+    form.append('file', f);
+    const token = document.getElementById('token').value;
+    const res = await fetch('/api/files/upload', { method: 'POST', body: form, headers: token ? { Authorization: 'Bearer ' + token } : {} });
+    const j = await res.json();
+    if (res.ok) {
+      appendNotification('Uploaded: ' + j.file.originalname);
+      addVideoLink(j.file.filename, j.file.originalname);
+    } else {
+      alert('Upload failed: ' + j.error || JSON.stringify(j));
+    }
+  });
+</script>
+</body>
+</html>
